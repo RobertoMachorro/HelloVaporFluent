@@ -7,7 +7,10 @@ public func configure(_ app: Application) throws {
 	// uncomment to serve files from /Public folder
 	// app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
-	try app.databases.use(.postgres(url: Environment.get("DATABASE_URL") ?? "postgres://docker:password@localhost:5432/docker"), as: .psql)
+	guard let pgUrl = Environment.get("DATABASE_URL") else {
+		fatalError("DATABASE_URL not defined")
+	}
+	try app.databases.use(.postgres(url: pgUrl), as: .psql)
 
 	app.migrations.add(CreateTodo())
 
